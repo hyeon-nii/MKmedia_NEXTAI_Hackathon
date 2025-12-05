@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+faiss_db_cache/
+.venv/
+venv/
+env/
+.DS_Store
+Thumbs.db
