@@ -20,7 +20,7 @@ class EconomicTermRAG:
             self._build_from_excel()
 
     def _load_from_disk(self):
-        print("💾 저장된 데이터베이스를 불러오는 중...")
+        print("저장된 데이터베이스를 불러오는 중...")
         self.vector_db = FAISS.load_local(
             self.DB_PATH, 
             self.embeddings, 
@@ -28,11 +28,10 @@ class EconomicTermRAG:
         )
 
     def _build_from_excel(self):
-        print("📚 엑셀 데이터를 읽어오는 중입니다...")
+        print("엑셀 데이터를 읽어오는 중입니다...")
         documents = []
 
         try:
-            # 파일명은 서현님의 실제 파일명과 일치해야 합니다
             df1 = pd.read_excel("data/20251205_시사경제용어사전.xlsx")
             for _, row in df1.iterrows():
                 term = str(row['용어'])
@@ -41,7 +40,7 @@ class EconomicTermRAG:
                     content = f"용어: {term}\n설명: {desc}"
                     documents.append(Document(page_content=content, metadata={"term": term}))
         except Exception as e:
-            print(f"⚠️ 엑셀 로드 실패: {e}")
+            print(f"엑셀 로드 실패: {e}")
 
         try:
             df2 = pd.read_excel("data/기획재정부_경제용어_20240905.xlsx")
@@ -55,14 +54,14 @@ class EconomicTermRAG:
             pass
 
         if documents:
-            print(f"🧠 총 {len(documents)}개의 용어 학습 시작 (서버 보호 모드)")
+            print(f"총 {len(documents)}개의 용어 학습 시작 (서버 보호 모드)")
             batch_size = 50
             self.vector_db = FAISS.from_documents(documents[:batch_size], self.embeddings)
             time.sleep(1)
 
             for i in range(batch_size, len(documents), batch_size):
                 batch = documents[i : i + batch_size]
-                # print(f"   🚀 학습 중... ({i}/{len(documents)})")
+                # print(f"   학습 중... ({i}/{len(documents)})")
                 for attempt in range(3):
                     try:
                         self.vector_db.add_documents(batch)
@@ -72,9 +71,9 @@ class EconomicTermRAG:
                         time.sleep(5)
             
             self.vector_db.save_local(self.DB_PATH)
-            print("✅ 학습 및 저장 완료!")
+            print("학습 및 저장 완료!")
         else:
-            print("❌ 데이터가 없습니다.")
+            print("데이터가 없습니다.")
 
     def search_terms(self, query_text, k=3):
         """
@@ -93,9 +92,9 @@ class EconomicTermRAG:
         print(f"\n   [검색 디버깅] '{query_text}' 결과:")
         for doc, score in results_with_scores:
             if score < THRESHOLD:
-                print(f"      ✅ 채택 (점수: {score:.3f}) - {doc.metadata.get('term')}")
+                print(f"      채택 (점수: {score:.3f}) - {doc.metadata.get('term')}")
                 terms_info.append(doc.page_content)
             else:
-                print(f"      🗑️ 탈락 (점수: {score:.3f} - 너무 다름) - {doc.metadata.get('term')}")
+                print(f"      탈락 (점수: {score:.3f} - 너무 다름) - {doc.metadata.get('term')}")
         
         return terms_info
