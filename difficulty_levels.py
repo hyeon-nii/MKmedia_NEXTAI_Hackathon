@@ -32,7 +32,7 @@ DIFFICULTY_LEVELS = {
     }
 }
 
-# 기본 변환 예시 데이터 (서현 님이 주신 것)
+# 기본 변환 예시 데이터 
 CONVERSION_EXAMPLES = {
     "example_1": {
         "original": "경제학에서 수요와 공급의 법칙은 시장 가격 결정의 근본적인 메커니즘이다. 재화의 가격은 수요와 공급이 균형을 이루는 지점에서 형성된다.",
@@ -55,7 +55,6 @@ def get_conversion_prompt(level: int, original_text: str, language: str = "Korea
 
     level_info = DIFFICULTY_LEVELS.get(level, DIFFICULTY_LEVELS[3])
     
-    # 🌟 핵심: 프롬프트에 '경제(example_1)' 예시를 박아넣어서 AI가 따라하게 만듦
     example_data = CONVERSION_EXAMPLES["example_1"]
     example_original = example_data["original"]
     example_converted = example_data[f"level_{level}"]
@@ -67,13 +66,12 @@ def get_conversion_prompt(level: int, original_text: str, language: str = "Korea
 # 목표 난이도: {level}단계 ({level_info['name']})
 {level_info['description']}
 
-# 💡 변환 예시 (이것과 비슷한 어휘 수준으로 바꾸세요):
 --------------------------------------------------
 [원문]: {example_original}
 [변환 결과]: {example_converted}
 --------------------------------------------------
 
-# ⚠️ 작성 규칙:
+# 작성 규칙:
 1. **내용 유지**: 원문의 팩트(사실관계)를 절대 빠뜨리지 마세요.
 2. **어휘 수준**: 위 예시를 참고하여 대상 독자가 이해할 수 있는 단어로 교체하세요.
 3. **서식 금지**: **(별표), ## 등 마크다운 기호를 쓰지 마세요.
